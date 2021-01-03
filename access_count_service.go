@@ -1,13 +1,15 @@
 package RateLimiter
 
 type AccessCountService struct {
+	counter AccessCounter
 }
 
 func (s *AccessCountService) QueryByIp(ip string) AccessCount {
-	return AccessCount{Ip: ip, Count: 1}
+	count := s.counter.Count(ip)
+	return AccessCount{Ip: ip, Count: count}
 }
 
-func NewAccessCountService() *AccessCountService {
-	return &AccessCountService{}
+func NewAccessCountService(counter AccessCounter) *AccessCountService {
+	return &AccessCountService{counter: counter}
 }
 
