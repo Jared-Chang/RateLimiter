@@ -16,6 +16,6 @@ func GetInstance() *TimeSeriesAccessCounter {
 	return instance
 }
 
-func (t *TimeSeriesAccessCounter) Count(ip string) int {
+func (t *TimeSeriesAccessCounter) Count(ip string, seconds int) int {
 	return 1
 }

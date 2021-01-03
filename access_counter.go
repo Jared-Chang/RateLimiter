@@ -1,6 +1,6 @@
 package RateLimiter
 
 type AccessCounter interface {
-	Count(ip string) int
+	Count(ip string, seconds int) int
 }
 

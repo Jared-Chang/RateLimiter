@@ -17,5 +17,5 @@ func (a *AccessCountController) ServeHTTP(writer http.ResponseWriter, request *h
 }
 
 func NewAccessCountController() *AccessCountController {
-	return &AccessCountController{accessCountService: NewAccessCountService(TimeSeriesAccessCounter.GetInstance())}
+	return &AccessCountController{accessCountService: NewAccessCountService(TimeSeriesAccessCounter.GetInstance(), 60)}
 }
