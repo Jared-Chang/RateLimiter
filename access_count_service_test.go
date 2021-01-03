@@ -27,3 +27,13 @@ func (t AccessCountServiceSuite) TestQueryByIp() {
 
 	t.Equal(expected, actual)
 }
+
+func (t AccessCountServiceSuite) TestQueryByIp_Twice() {
+	ip := "127.0.0.1"
+	count := 2
+
+	expected := AccessCount{Ip: ip, Count: count}
+	actual := t.AccessCountService.QueryByIp(ip)
+
+	t.Equal(expected, actual)
+}
