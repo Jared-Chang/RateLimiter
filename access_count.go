@@ -1,6 +1,6 @@
 package RateLimiter
 
 type AccessCount struct {
-	Ip string
-	Count int
+	Ip string `json:"ip"`
+	Count int `json:"count"`
 }

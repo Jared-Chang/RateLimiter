@@ -8,9 +8,7 @@ type AccessCountHandlerFactor struct {
 }
 
 func (f *AccessCountHandlerFactor) Create() http.Handler {
-	return http.HandlerFunc(
-		func(w http.ResponseWriter, r *http.Request) {
-	})
+	return NewAccessCountController()
 }
 
 func NewAccessCountHandlerFactor() *AccessCountHandlerFactor {
