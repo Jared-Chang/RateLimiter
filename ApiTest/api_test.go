@@ -2,6 +2,7 @@ package ApiTest
 
 import (
 	"RateLimiter/ServiceFactory"
+	"RateLimiter/TimeSeriesAccessCounter"
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/suite"
@@ -27,6 +28,7 @@ func (t *ApiTestSuite) SetupTest() {
 }
 
 func (t *ApiTestSuite) TearDownTest() {
+	TimeSeriesAccessCounter.GetInstance().Clear()
 	t.TestServer.Close()
 }
 

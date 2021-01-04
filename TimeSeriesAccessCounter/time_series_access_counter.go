@@ -52,3 +52,7 @@ func (t *TimeSeriesAccessCounter) Insert(ip string) {
 		}
 	}
 }
+
+func (t *TimeSeriesAccessCounter) Clear() {
+	t.Data = make([]map[string]interface{}, 0)
+}
