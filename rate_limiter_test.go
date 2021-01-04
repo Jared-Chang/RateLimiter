@@ -2,6 +2,7 @@ package RateLimiter
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
@@ -15,7 +16,7 @@ type RateLimiterMiddlewareSuite struct {
 	mockAccessCounter *MockAccessCounter
 }
 
-func TestSuiteInit(t *testing.T) {
+func TestRateLimiterMiddlewareSuiteInit(t *testing.T) {
 	suite.Run(t, new(RateLimiterMiddlewareSuite))
 }
 
@@ -29,7 +30,7 @@ func (t RateLimiterMiddlewareSuite) TestDeniedAccess_After60TimesAccess_Within1M
 	t.mockAccessCounter.On("Count", mock.AnythingOfType("string"), 60).Return(61)
 
 	writer := httptest.NewRecorder()
-	request := httptest.NewRequest("GET", "http://127.0.0.1:12345", nil)
+	request := httptest.NewRequest("GET", "http://127.0.0.1", nil)
 
 	t.sut.ServeHTTP(writer, request)
 
@@ -37,11 +38,13 @@ func (t RateLimiterMiddlewareSuite) TestDeniedAccess_After60TimesAccess_Within1M
 	body, _ := ioutil.ReadAll(response.Body)
 	response.Body.Close()
 
+	fmt.Println(string(body))
+
 	var jsonObject map[string]interface{}
 	json.Unmarshal(body, &jsonObject)
 
-	actual := int(jsonObject["count"].(float64))
-	expected := 1
+	actual := jsonObject["error"].(string)
+	expected := "Error"
 
 	t.Equal(expected, actual)
 }
