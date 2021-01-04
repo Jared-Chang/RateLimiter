@@ -19,3 +19,7 @@ func GetInstance() *TimeSeriesAccessCounter {
 func (t *TimeSeriesAccessCounter) Count(ip string, seconds int) int {
 	return 1
 }
+
+func (t *TimeSeriesAccessCounter) Insert(ip string) {
+	panic("implement me")
+}

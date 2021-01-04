@@ -38,6 +38,7 @@ func (t *RateLimiterMiddlewareSuite) SetupTest() {
 func (t RateLimiterMiddlewareSuite) TestDeniedAccess_After60TimesAccess_Within1Minute() {
 
 	t.mockAccessCounter.On("Count", mock.Anything, 60).Return(61)
+	t.mockAccessCounter.On("Insert", mock.Anything).Return(nil)
 
 	jsonObject := Get(&t)
 
@@ -51,6 +52,7 @@ func (t RateLimiterMiddlewareSuite) TestAllowAccess() {
 
 	t.mockAccessCounter.On("Count", mock.Anything, 60).Return(1)
 	t.mockHandler.On("ServeHTTP", mock.Anything, mock.Anything).Return(nil)
+	t.mockAccessCounter.On("Insert", mock.Anything).Return(nil)
 
 	Get(&t)
 
@@ -61,6 +63,7 @@ func (t RateLimiterMiddlewareSuite) TestDeniedAccess_After30TimesAccess_Within30
 
 	t.sut = NewRateLimiterMiddleware(t.mockAccessCounter, t.mockHandler, 30, 30)
 	t.mockAccessCounter.On("Count", mock.Anything, 30).Return(31)
+	t.mockAccessCounter.On("Insert", mock.Anything).Return(nil)
 
 	jsonObject := Get(&t)
 

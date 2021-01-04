@@ -21,6 +21,7 @@ func NewRateLimiterMiddleware(accessCounter AccessCounter, handler http.Handler,
 }
 
 func (r *RateLimiterMiddleware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+	r.AccessCounter.Insert(request.RemoteAddr)
 	count := r.AccessCounter.Count(request.RemoteAddr, r.Seconds)
 
 	if count > r.LimitCount {
