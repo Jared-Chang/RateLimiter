@@ -1,10 +1,10 @@
-#RateLimiter
+# RateLimiter
 
 ### Test with API test
 Use following command to see the testing result
 
 ```shell
-go test -v ApiTest
+go test -v ./ApiTest
 ```
 
 ### Test with your own testing tool
