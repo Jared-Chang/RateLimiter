@@ -1,4 +1,4 @@
-package RateLimiter
+package Model
 
 type AccessCount struct {
 	Ip string `json:"ip"`

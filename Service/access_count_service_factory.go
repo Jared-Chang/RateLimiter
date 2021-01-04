@@ -1,6 +1,8 @@
-package RateLimiter
+package Service
 
 import (
+	"RateLimiter/Controller"
+	"RateLimiter/Middleware"
 	"RateLimiter/TimeSeriesAccessCounter"
 	"net/http"
 )
@@ -9,8 +11,8 @@ type AccessCountHandlerFactor struct {
 }
 
 func (f *AccessCountHandlerFactor) Create() http.Handler {
-	return NewRateLimiterMiddleware(TimeSeriesAccessCounter.GetInstance(),
-		NewAccessCountController(TimeSeriesAccessCounter.GetInstance(), 60),
+	return Middleware.NewRateLimiterMiddleware(TimeSeriesAccessCounter.GetInstance(),
+		Controller.NewAccessCountController(TimeSeriesAccessCounter.GetInstance(), 60),
 		60,
 		60)
 }

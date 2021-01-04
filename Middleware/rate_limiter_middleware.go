@@ -1,6 +1,7 @@
-package RateLimiter
+package Middleware
 
 import (
+	"RateLimiter/TimeSeriesAccessCounter"
 	"encoding/json"
 	"net/http"
 	"sync"
@@ -11,13 +12,13 @@ type AccessDenied struct {
 }
 
 type RateLimiterMiddleware struct {
-	AccessCounter AccessCounter
+	AccessCounter TimeSeriesAccessCounter.AccessCounter
 	Handler       http.Handler
 	Seconds       int
 	LimitCount    int
 }
 
-func NewRateLimiterMiddleware(accessCounter AccessCounter, handler http.Handler, seconds int, limitCount int) *RateLimiterMiddleware {
+func NewRateLimiterMiddleware(accessCounter TimeSeriesAccessCounter.AccessCounter, handler http.Handler, seconds int, limitCount int) *RateLimiterMiddleware {
 	return &RateLimiterMiddleware{AccessCounter: accessCounter, Handler: handler, Seconds: seconds, LimitCount: limitCount}
 }
 

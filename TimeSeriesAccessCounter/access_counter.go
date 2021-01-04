@@ -1,4 +1,4 @@
-package RateLimiter
+package TimeSeriesAccessCounter
 
 type AccessCounter interface {
 	Count(ip string, seconds int) int

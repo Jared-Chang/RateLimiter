@@ -1,6 +1,7 @@
-package RateLimiter
+package Middleware
 
 import (
+	"RateLimiter/TimeSeriesAccessCounter"
 	"encoding/json"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
@@ -21,7 +22,7 @@ func (m *MockHandler) ServeHTTP(writer http.ResponseWriter, request *http.Reques
 type RateLimiterMiddlewareSuite struct {
 	suite.Suite
 	sut *RateLimiterMiddleware
-	mockAccessCounter *MockAccessCounter
+	mockAccessCounter *TimeSeriesAccessCounter.MockAccessCounter
 	mockHandler *MockHandler
 }
 
@@ -31,7 +32,7 @@ func TestRateLimiterMiddlewareSuiteInit(t *testing.T) {
 
 func (t *RateLimiterMiddlewareSuite) SetupTest() {
 	t.mockHandler = new(MockHandler)
-	t.mockAccessCounter = new(MockAccessCounter)
+	t.mockAccessCounter = new(TimeSeriesAccessCounter.MockAccessCounter)
 	t.sut = NewRateLimiterMiddleware(t.mockAccessCounter, t.mockHandler, 60, 60)
 }
 

@@ -1,4 +1,4 @@
-package RateLimiter
+package TimeSeriesAccessCounter
 
 import "github.com/stretchr/testify/mock"
 
