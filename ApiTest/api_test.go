@@ -30,15 +30,6 @@ func (t *ApiTestSuite) TearDownTest() {
 	t.TestServer.Close()
 }
 
-func (t ApiTestSuite) TestReturnAccessCountByIp() {
-	jsonObject := GetResponse(t)
-
-	actual := int(jsonObject["count"].(float64))
-	expected := 1
-
-	t.Equal(expected, actual)
-}
-
 func (t ApiTestSuite) TestOnlyCanAccess60TimesPerMinute() {
 	for i := 0; i < 60; i++ {
 		GetResponse(t)
@@ -47,6 +38,15 @@ func (t ApiTestSuite) TestOnlyCanAccess60TimesPerMinute() {
 
 	actual := jsonObject["error"].(string)
 	expected := "Error"
+
+	t.Equal(expected, actual)
+}
+
+func (t ApiTestSuite) TestReturnAccessCountByIp() {
+	jsonObject := GetResponse(t)
+
+	actual := int(jsonObject["count"].(float64))
+	expected := 1
 
 	t.Equal(expected, actual)
 }
@@ -61,7 +61,7 @@ func (t ApiTestSuite) TestCanAccess1TimePerSecond() {
 
 		t.Greater(actual, 0)
 
-		time.Sleep(time.Duration(1100)*time.Millisecond)
+		time.Sleep(time.Duration(1100) * time.Millisecond)
 	}
 }
 

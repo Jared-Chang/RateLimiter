@@ -5,6 +5,7 @@ import (
 	"RateLimiter/TimeSeriesAccessCounter"
 	"encoding/json"
 	"net/http"
+	"strings"
 )
 
 type AccessCountController struct {
@@ -12,7 +13,7 @@ type AccessCountController struct {
 }
 
 func (a *AccessCountController) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	response := a.accessCountService.QueryByIp(request.RemoteAddr)
+	response := a.accessCountService.QueryByIp(strings.Split(request.RemoteAddr, ":")[0])
 	writer.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(writer).Encode(response)
 }

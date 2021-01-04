@@ -4,6 +4,7 @@ import (
 	"RateLimiter/TimeSeriesAccessCounter"
 	"encoding/json"
 	"net/http"
+	"strings"
 	"sync"
 )
 
@@ -24,10 +25,12 @@ func NewRateLimiterMiddleware(accessCounter TimeSeriesAccessCounter.AccessCounte
 
 func (r *RateLimiterMiddleware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 
+	ip := strings.Split(request.RemoteAddr, ":")[0]
+
 	m := new(sync.Mutex)
 	m.Lock()
-	r.AccessCounter.Insert(request.RemoteAddr)
-	count := r.AccessCounter.Count(request.RemoteAddr, r.Seconds)
+	r.AccessCounter.Insert(ip)
+	count := r.AccessCounter.Count(ip, r.Seconds)
 	m.Unlock()
 
 	if count > r.LimitCount {
