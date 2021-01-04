@@ -1,4 +1,4 @@
-package Service
+package RateLimiter
 
 import (
 	"RateLimiter/Controller"

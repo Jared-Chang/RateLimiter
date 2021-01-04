@@ -1,13 +1,14 @@
 package RateLimiter
 
 import (
-	"RateLimiter/Service"
 	"encoding/json"
+	"fmt"
 	"github.com/stretchr/testify/suite"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 )
 
 type ApiTestSuite struct {
@@ -20,7 +21,7 @@ func TestApiTestSuiteInit(t *testing.T) {
 }
 
 func (t *ApiTestSuite) SetupTest() {
-	accessCountHandlerFactor := Service.NewAccessCountHandlerFactor()
+	accessCountHandlerFactor := NewAccessCountHandlerFactor()
 	t.TestServer = httptest.NewServer(accessCountHandlerFactor.Create())
 }
 
@@ -47,6 +48,20 @@ func (t ApiTestSuite) TestOnlyCanAccess60TimesPerMinute() {
 	expected := "Error"
 
 	t.Equal(expected, actual)
+}
+
+func (t ApiTestSuite) TestCanAccess1TimePerSecond() {
+	for i := 0; i < 120; i++ {
+		jsonObject := GetResponse(t)
+
+		fmt.Println("#Access: ", i+1, "Your ip: ", jsonObject["ip"].(string), "#AccessCount: ", int(jsonObject["count"].(float64)))
+
+		actual := int(jsonObject["count"].(float64))
+
+		t.Greater(actual, 0)
+
+		time.Sleep(time.Duration(1100)*time.Millisecond)
+	}
 }
 
 func GetResponse(t ApiTestSuite) map[string]interface{} {
