@@ -1,7 +1,6 @@
 package RateLimiter
 
 import (
-	"RateLimiter/TimeSeriesAccessCounter"
 	"encoding/json"
 	"net/http"
 )
@@ -16,6 +15,6 @@ func (a *AccessCountController) ServeHTTP(writer http.ResponseWriter, request *h
 	_ = json.NewEncoder(writer).Encode(response)
 }
 
-func NewAccessCountController() *AccessCountController {
-	return &AccessCountController{accessCountService: NewAccessCountService(TimeSeriesAccessCounter.GetInstance(), 60)}
+func NewAccessCountController(accessCounter AccessCounter, querySeconds int) *AccessCountController {
+	return &AccessCountController{accessCountService: NewAccessCountService(accessCounter, querySeconds)}
 }
