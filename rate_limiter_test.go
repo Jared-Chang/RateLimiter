@@ -70,9 +70,22 @@ func (t RateLimiterMiddlewareSuite) TestDeniedAccess_After30TimesAccess_Within30
 	t.Equal(expected, actual)
 }
 
-func Get(t *RateLimiterMiddlewareSuite) (jsonObject map[string]interface{}) {
+func (t RateLimiterMiddlewareSuite) TestIncreaseAccessCount() {
+
+	remoteAddr := "1.2.3.4"
+
+	t.mockAccessCounter.On("Count", mock.Anything, mock.Anything).Return(61)
+	t.mockAccessCounter.On("Insert", remoteAddr).Return(nil)
+
+	_ = GetWithRemoteAddr(&t, remoteAddr)
+
+	t.mockAccessCounter.AssertCalled(t.T(), "Insert", remoteAddr)
+}
+
+func GetWithRemoteAddr(t *RateLimiterMiddlewareSuite, remoteAddr string) (jsonObject map[string]interface{}) {
 	writer := httptest.NewRecorder()
 	request := httptest.NewRequest("GET", "http://127.0.0.1", nil)
+	request.RemoteAddr = remoteAddr
 
 	t.sut.ServeHTTP(writer, request)
 
@@ -82,4 +95,8 @@ func Get(t *RateLimiterMiddlewareSuite) (jsonObject map[string]interface{}) {
 
 	_ = json.Unmarshal(body, &jsonObject)
 	return
+}
+
+func Get(t *RateLimiterMiddlewareSuite) (jsonObject map[string]interface{}) {
+	return GetWithRemoteAddr(t, "127.0.0.1")
 }
