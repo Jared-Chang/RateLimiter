@@ -1,6 +1,7 @@
-package RateLimiter
+package ApiTest
 
 import (
+	"RateLimiter/ServiceFactory"
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/suite"
@@ -21,7 +22,7 @@ func TestApiTestSuiteInit(t *testing.T) {
 }
 
 func (t *ApiTestSuite) SetupTest() {
-	accessCountHandlerFactor := NewAccessCountHandlerFactor()
+	accessCountHandlerFactor := ServiceFactory.NewAccessCountHandlerFactor()
 	t.TestServer = httptest.NewServer(accessCountHandlerFactor.Create())
 }
 
