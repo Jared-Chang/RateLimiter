@@ -12,16 +12,18 @@ type AccessDenied struct {
 type RateLimiterMiddleware struct {
 	AccessCounter AccessCounter
 	Handler       http.Handler
+	Seconds       int
+	LimitCount    int
 }
 
-func NewRateLimiterMiddleware(accessCounter AccessCounter, handler http.Handler) *RateLimiterMiddleware {
-	return &RateLimiterMiddleware{AccessCounter: accessCounter, Handler: handler}
+func NewRateLimiterMiddleware(accessCounter AccessCounter, handler http.Handler, seconds int, limitCount int) *RateLimiterMiddleware {
+	return &RateLimiterMiddleware{AccessCounter: accessCounter, Handler: handler, Seconds: seconds, LimitCount: limitCount}
 }
 
 func (r *RateLimiterMiddleware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	count := r.AccessCounter.Count(request.RemoteAddr, 60)
+	count := r.AccessCounter.Count(request.RemoteAddr, r.Seconds)
 
-	if count > 60 {
+	if count > r.LimitCount {
 		writer.Header().Set("Content-Type", "application/json")
 		_ = json.NewEncoder(writer).Encode(AccessDenied{"Error"})
 		return
