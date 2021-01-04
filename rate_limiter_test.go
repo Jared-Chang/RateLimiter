@@ -66,8 +66,8 @@ func Get(t *RateLimiterMiddlewareSuite) (jsonObject map[string]interface{}) {
 
 	response := writer.Result()
 	body, _ := ioutil.ReadAll(response.Body)
-	response.Body.Close()
+	_ = response.Body.Close()
 
-	json.Unmarshal(body, &jsonObject)
+	_ = json.Unmarshal(body, &jsonObject)
 	return
 }

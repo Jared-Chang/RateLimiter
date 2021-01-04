@@ -13,7 +13,7 @@ type AccessCountController struct {
 func (a *AccessCountController) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 	response := a.accessCountService.QueryByIp(request.RemoteAddr)
 	writer.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(writer).Encode(response)
+	_ = json.NewEncoder(writer).Encode(response)
 }
 
 func NewAccessCountController() *AccessCountController {

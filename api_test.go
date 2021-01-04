@@ -52,9 +52,9 @@ func GetResponse(t ApiTestSuite) map[string]interface{} {
 	response, _ := http.Get(t.TestServer.URL)
 
 	body, _ := ioutil.ReadAll(response.Body)
-	response.Body.Close()
+	_ = response.Body.Close()
 
 	var jsonObject map[string]interface{}
-	json.Unmarshal(body, &jsonObject)
+	_ = json.Unmarshal(body, &jsonObject)
 	return jsonObject
 }

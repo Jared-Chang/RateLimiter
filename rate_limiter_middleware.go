@@ -23,7 +23,7 @@ func (r *RateLimiterMiddleware) ServeHTTP(writer http.ResponseWriter, request *h
 
 	if count > 60 {
 		writer.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(writer).Encode(AccessDenied{"Error"})
+		_ = json.NewEncoder(writer).Encode(AccessDenied{"Error"})
 		return
 	}
 
