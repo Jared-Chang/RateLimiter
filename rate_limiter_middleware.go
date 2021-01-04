@@ -3,6 +3,7 @@ package RateLimiter
 import (
 	"encoding/json"
 	"net/http"
+	"sync"
 )
 
 type AccessDenied struct {
@@ -21,8 +22,12 @@ func NewRateLimiterMiddleware(accessCounter AccessCounter, handler http.Handler,
 }
 
 func (r *RateLimiterMiddleware) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+
+	m := new(sync.Mutex)
+	m.Lock()
 	r.AccessCounter.Insert(request.RemoteAddr)
 	count := r.AccessCounter.Count(request.RemoteAddr, r.Seconds)
+	m.Unlock()
 
 	if count > r.LimitCount {
 		writer.Header().Set("Content-Type", "application/json")
