@@ -51,6 +51,18 @@ func (t *TimeSeriesAccessCounterSuite) TestQueryWithTimeRange() {
 	t.Equal(expected, actual)
 }
 
+func (t *TimeSeriesAccessCounterSuite) TestRemoveDataOverBufferTime() {
+	t.sut.BufferRange = 60
+
+	InsertDataWithTimes(t,5, 60, 70)
+	SetCurrentTimeTo(t, 70)
+
+	actual := t.sut.Count("127.0.0.1", 120)
+	expected := 2
+
+	t.Equal(expected, actual)
+}
+
 func SetCurrentTimeTo(t *TimeSeriesAccessCounterSuite, currentTime int) {
 	mock := new(MockTime)
 	t.sut.UnixTime = mock
