@@ -8,7 +8,7 @@ import (
 type TimeSeriesAccessCounter struct {
 	Data        []map[string]interface{}
 	UnixTime    UnixTime.UnixTime
-	BufferRange int
+	BufferRange int64
 }
 
 var instance *TimeSeriesAccessCounter
@@ -37,5 +37,18 @@ func (t *TimeSeriesAccessCounter) Count(ip string, seconds int) int {
 }
 
 func (t *TimeSeriesAccessCounter) Insert(ip string) {
-	t.Data = append(t.Data, map[string]interface{}{"Ip": ip, "Timestamp": t.UnixTime.GetUnixNow()})
+
+	now := t.UnixTime.GetUnixNow()
+
+	t.Data = append(t.Data, map[string]interface{}{"Ip": ip, "Timestamp": now})
+
+	outOfDateTime := now - t.BufferRange
+
+	for {
+		if t.Data[0]["Timestamp"].(int64) < outOfDateTime {
+			t.Data = t.Data[1:]
+		} else {
+			return
+		}
+	}
 }
