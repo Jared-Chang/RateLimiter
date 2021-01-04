@@ -1,13 +1,24 @@
 package TimeSeriesAccessCounter
 
 import (
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"
 	"testing"
 )
 
+type MockTime struct {
+	mock.Mock
+}
+
+func (m *MockTime) GetUnixNow() int64 {
+	args := m.Called()
+	return int64(args.Int(0))
+}
+
 type TimeSeriesAccessCounterSuite struct {
 	suite.Suite
-	*TimeSeriesAccessCounter
+	sut      *TimeSeriesAccessCounter
+	MockTime *MockTime
 }
 
 func TestTimeSeriesAccessCounterSuiteInit(t *testing.T) {
@@ -15,13 +26,30 @@ func TestTimeSeriesAccessCounterSuiteInit(t *testing.T) {
 }
 
 func (t *TimeSeriesAccessCounterSuite) SetupTest() {
-	t.TimeSeriesAccessCounter = new(TimeSeriesAccessCounter)
+	t.MockTime = new(MockTime)
+	t.sut = new(TimeSeriesAccessCounter)
+	t.sut.UnixTime = t.MockTime
 }
 
 func (t *TimeSeriesAccessCounterSuite) TestInsertData() {
-	t.TimeSeriesAccessCounter.Insert("127.0.0.1")
 
-	actual := t.TimeSeriesAccessCounter.Count("127.0.0.1", 0)
+	t.MockTime.On("GetUnixNow").Return(0)
+
+	t.sut.Insert("127.0.0.1")
+
+	actual := t.sut.Count("127.0.0.1", 0)
+	expected := 1
+
+	t.Equal(expected, actual)
+}
+
+func (t *TimeSeriesAccessCounterSuite) TestQueryWithTimeRange() {
+	t.MockTime.On("GetUnixNow").Return(60)
+	t.sut.Insert("127.0.0.1")
+	t.MockTime.On("GetUnixNow").Return(5)
+	t.sut.Insert("127.0.0.1")
+
+	actual := t.sut.Count("127.0.0.1", 10)
 	expected := 1
 
 	t.Equal(expected, actual)

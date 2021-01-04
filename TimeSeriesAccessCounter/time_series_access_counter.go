@@ -1,12 +1,13 @@
 package TimeSeriesAccessCounter
 
 import (
+	"RateLimiter/UnixTime"
 	"sync"
-	"time"
 )
 
 type TimeSeriesAccessCounter struct {
-	Data []map[string]interface{}
+	Data     []map[string]interface{}
+	UnixTime UnixTime.UnixTime
 }
 
 var instance *TimeSeriesAccessCounter
@@ -14,7 +15,7 @@ var once sync.Once
 
 func GetInstance() *TimeSeriesAccessCounter {
 	once.Do(func() {
-		instance = &TimeSeriesAccessCounter{}
+		instance = &TimeSeriesAccessCounter{UnixTime: new(UnixTime.HumbleTime)}
 	})
 
 	return instance
@@ -33,5 +34,5 @@ func (t *TimeSeriesAccessCounter) Count(ip string, seconds int) int {
 }
 
 func (t *TimeSeriesAccessCounter) Insert(ip string) {
-	t.Data = append(t.Data, map[string]interface{}{"Ip": ip, "Timestamp":time.Now().Unix()})
+	t.Data = append(t.Data, map[string]interface{}{"Ip": ip, "Timestamp": t.UnixTime.GetUnixNow()})
 }
