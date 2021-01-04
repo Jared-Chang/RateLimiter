@@ -22,10 +22,12 @@ func GetInstance() *TimeSeriesAccessCounter {
 }
 
 func (t *TimeSeriesAccessCounter) Count(ip string, seconds int) int {
+
+	afterTheTime := t.UnixTime.GetUnixNow() - int64(seconds)
 	count := 0
 
 	for _, data := range t.Data {
-		if data["Ip"] == ip {
+		if data["Ip"] == ip && data["Timestamp"].(int64) >= afterTheTime {
 			count++
 		}
 	}

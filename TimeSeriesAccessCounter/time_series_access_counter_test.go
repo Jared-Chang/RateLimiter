@@ -19,6 +19,7 @@ type TimeSeriesAccessCounterSuite struct {
 	suite.Suite
 	sut      *TimeSeriesAccessCounter
 	MockTime *MockTime
+	MockTime2 *MockTime
 }
 
 func TestTimeSeriesAccessCounterSuiteInit(t *testing.T) {
@@ -27,6 +28,7 @@ func TestTimeSeriesAccessCounterSuiteInit(t *testing.T) {
 
 func (t *TimeSeriesAccessCounterSuite) SetupTest() {
 	t.MockTime = new(MockTime)
+	t.MockTime2 = new(MockTime)
 	t.sut = new(TimeSeriesAccessCounter)
 	t.sut.UnixTime = t.MockTime
 }
@@ -44,9 +46,11 @@ func (t *TimeSeriesAccessCounterSuite) TestInsertData() {
 }
 
 func (t *TimeSeriesAccessCounterSuite) TestQueryWithTimeRange() {
-	t.MockTime.On("GetUnixNow").Return(60)
-	t.sut.Insert("127.0.0.1")
 	t.MockTime.On("GetUnixNow").Return(5)
+	t.sut.Insert("127.0.0.1")
+
+	t.sut.UnixTime = t.MockTime2
+	t.MockTime2.On("GetUnixNow").Return(60)
 	t.sut.Insert("127.0.0.1")
 
 	actual := t.sut.Count("127.0.0.1", 10)
