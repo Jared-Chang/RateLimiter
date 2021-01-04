@@ -47,7 +47,6 @@ func (t RateLimiterMiddlewareSuite) TestDeniedAccess_After60TimesAccess_Within1M
 	t.Equal(expected, actual)
 }
 
-
 func (t RateLimiterMiddlewareSuite) TestAllowAccess() {
 
 	t.mockAccessCounter.On("Count", mock.Anything, 60).Return(1)
@@ -56,6 +55,18 @@ func (t RateLimiterMiddlewareSuite) TestAllowAccess() {
 	Get(&t)
 
 	t.mockHandler.AssertCalled(t.T(), "ServeHTTP", mock.Anything, mock.Anything)
+}
+
+func (t RateLimiterMiddlewareSuite) TestDeniedAccess_After30TimesAccess_Within30Seconds() {
+
+	t.mockAccessCounter.On("Count", mock.Anything, 30).Return(31)
+
+	jsonObject := Get(&t)
+
+	actual := jsonObject["error"].(string)
+	expected := "Error"
+
+	t.Equal(expected, actual)
 }
 
 func Get(t *RateLimiterMiddlewareSuite) (jsonObject map[string]interface{}) {
