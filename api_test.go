@@ -42,7 +42,7 @@ func (t ApiTestSuite) TestOnlyCanAccess60TimesPerMinute() {
 	}
 	jsonObject := GetResponse(t)
 
-	actual := string(jsonObject["error"].([]byte))
+	actual := jsonObject["error"].(string)
 	expected := "Error"
 
 	t.Equal(expected, actual)

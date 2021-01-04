@@ -16,7 +16,7 @@ var once sync.Once
 
 func GetInstance() *TimeSeriesAccessCounter {
 	once.Do(func() {
-		instance = &TimeSeriesAccessCounter{UnixTime: new(UnixTime.HumbleTime)}
+		instance = &TimeSeriesAccessCounter{UnixTime: new(UnixTime.HumbleTime), BufferRange: 60}
 	})
 
 	return instance
