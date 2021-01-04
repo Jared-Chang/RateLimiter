@@ -6,8 +6,9 @@ import (
 )
 
 type TimeSeriesAccessCounter struct {
-	Data     []map[string]interface{}
-	UnixTime UnixTime.UnixTime
+	Data        []map[string]interface{}
+	UnixTime    UnixTime.UnixTime
+	BufferRange int
 }
 
 var instance *TimeSeriesAccessCounter

@@ -18,8 +18,6 @@ func (m *MockTime) GetUnixNow() int64 {
 type TimeSeriesAccessCounterSuite struct {
 	suite.Suite
 	sut      *TimeSeriesAccessCounter
-	MockTime *MockTime
-	MockTime2 *MockTime
 }
 
 func TestTimeSeriesAccessCounterSuiteInit(t *testing.T) {
@@ -27,17 +25,15 @@ func TestTimeSeriesAccessCounterSuiteInit(t *testing.T) {
 }
 
 func (t *TimeSeriesAccessCounterSuite) SetupTest() {
-	t.MockTime = new(MockTime)
-	t.MockTime2 = new(MockTime)
 	t.sut = new(TimeSeriesAccessCounter)
-	t.sut.UnixTime = t.MockTime
+	t.sut.UnixTime = new(MockTime)
+	t.sut.BufferRange = 60
 }
 
 func (t *TimeSeriesAccessCounterSuite) TestInsertData() {
 
-	t.MockTime.On("GetUnixNow").Return(0)
-
-	t.sut.Insert("127.0.0.1")
+	InsertDataWithTimes(t,5)
+	SetCurrentTimeTo(t, 5)
 
 	actual := t.sut.Count("127.0.0.1", 0)
 	expected := 1
@@ -46,15 +42,29 @@ func (t *TimeSeriesAccessCounterSuite) TestInsertData() {
 }
 
 func (t *TimeSeriesAccessCounterSuite) TestQueryWithTimeRange() {
-	t.MockTime.On("GetUnixNow").Return(5)
-	t.sut.Insert("127.0.0.1")
-
-	t.sut.UnixTime = t.MockTime2
-	t.MockTime2.On("GetUnixNow").Return(60)
-	t.sut.Insert("127.0.0.1")
+	InsertDataWithTimes(t,5, 60)
+	SetCurrentTimeTo(t, 60)
 
 	actual := t.sut.Count("127.0.0.1", 10)
 	expected := 1
 
 	t.Equal(expected, actual)
+}
+
+func SetCurrentTimeTo(t *TimeSeriesAccessCounterSuite, currentTime int) {
+	mock := new(MockTime)
+	t.sut.UnixTime = mock
+	mock.On("GetUnixNow").Return(currentTime)
+}
+
+func InsertDataWithTimes(t *TimeSeriesAccessCounterSuite, times ...int) {
+	currentMock := t.sut.UnixTime
+	defer func() {t.sut.UnixTime = currentMock} ()
+
+	for _, time := range times {
+		mock := new(MockTime)
+		t.sut.UnixTime = mock
+		mock.On("GetUnixNow").Return(time)
+		t.sut.Insert("127.0.0.1")
+	}
 }
